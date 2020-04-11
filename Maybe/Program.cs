@@ -11,7 +11,10 @@ class Program
     {
         var maybeYear = TryToGetYear();
 
-        maybeYear.Process(year => Console.WriteLine($"This year is {year}"));
+        foreach (var year in maybeYear)
+        {
+            Console.WriteLine($"This year is {year}");
+        }
 
         var maybeSeconds = new Maybe<int>[10];
         for (var i = 0; i < maybeSeconds.Length; i++)

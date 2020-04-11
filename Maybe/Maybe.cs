@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -36,11 +37,11 @@ namespace Opt
                 throw new ArgumentNullException(nameof(source));
             }
 
-            return source.SelectMany(maybe => maybe.AsEnumerable());
+            return source.SelectMany(maybe => maybe as IEnumerable<T>);
         }
     }
 
-    public readonly struct Maybe<T>
+    public readonly struct Maybe<T> : IEnumerable<T>
     {
         private readonly T value;
         private readonly bool hasValue;
@@ -55,48 +56,27 @@ namespace Opt
         public static Maybe<U> Create<U>(U value) => new Maybe<U>(value, true);
         public static Maybe<U> Nothing<U>() => new Maybe<U>(default(U), false);
 
-        public Maybe<U> Map<U>(Func<T, U> mapper)
-        {
-            if (mapper is null)
-            {
-                throw new ArgumentNullException(nameof(mapper));
-            }
-
-            var newValue = mapper(this.value);
-
-            return Create<U>(newValue);
-        }
-
-        public Maybe<U> FlatMap<U>(Func<T, Maybe<U>> mapper)
-        {
-            if (mapper is null)
-            {
-                throw new ArgumentNullException(nameof(mapper));
-            }
-
-            return mapper(this.value);
-        }
-
-        public void Process(Action<T> processer)
-        {
-            processer(this.value);
-        }
-
         public bool IsPresent()
         {
             return this.hasValue;
         }
 
-        public IEnumerable<T> AsEnumerable()
+
+
+        public IEnumerator<T> GetEnumerator()
         {
             if (this.hasValue)
             {
-                return new List<T>{ this.value };
+                return new List<T>{ this.value }.GetEnumerator();
             }
             else
             {
-                return new List<T>();
+                return new List<T>().GetEnumerator();
             }
+        }
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return this.GetEnumerator();
         }
     }
 }
