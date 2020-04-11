@@ -16,6 +16,11 @@ class Program
             Console.WriteLine($"This year is {year}");
         }
 
+        foreach (var nextYear in maybeYear.Select(year => year + 1))
+        {
+            Console.WriteLine($"Next year is {nextYear}");
+        }
+
         var maybeSeconds = new Maybe<int>[10];
         for (var i = 0; i < maybeSeconds.Length; i++)
         {
